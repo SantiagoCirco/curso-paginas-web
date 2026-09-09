@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Aprende Variables con Minecraft</title>
+  <style>
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background-color: #1d1d1d;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+    }
+
+    h1 {
+      color: #55ff55;
+      text-shadow: 2px 2px #000;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    /* Estilo del Cofre de Minecraft */
+    .chest-box {
+      border: 4px solid #000;
+      background-color: #312317;
+      padding: 20px;
+      border-radius: 8px;
+      width: 280px;
+      box-shadow: 6px 6px 0px #000;
+      position: relative;
+    }
+
+    .chest-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #ffff55;
+      margin-bottom: 15px;
+    }
+
+    .chest-graphic {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 15px auto;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* Animación cuando interactúa */
+    .chest-graphic.bounce {
+      transform: scale(1.15) rotate(-3deg);
+    }
+
+    /* El contenido (slot) de Minecraft */
+    .slot {
+      background-color: #8b8b8b;
+      border: 4px solid #373737;
+      border-right-color: #fff;
+      border-bottom-color: #fff;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+      color: #000;
+      margin-top: 10px;
+      padding: 8px;
+      box-shadow: inset 3px 3px 0px #000;
+    }
+
+    /* Panel de Control */
+    .controls {
+      background-color: #2b2b2b;
+      border: 3px solid #555;
+      padding: 20px;
+      border-radius: 8px;
+      width: 320px;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #aaaaaa;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+      font-family: inherit;
+      font-size: 15px;
+      border-radius: 4px;
+      border: none;
+    }
+
+    input, select {
+      background-color: #fff;
+      color: #000;
+      font-weight: bold;
+    }
+
+    button {
+      background-color: #55ff55;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0px 4px 0px #00aa00;
+      transition: all 0.1s;
+    }
+
+    button:active {
+      transform: translateY(4px);
+      box-shadow: none;
+    }
+
+    button.read-btn {
+      background-color: #55ffff;
+      box-shadow: 0px 4px 0px #00aaaa;
+    }
+
+    /* Pantalla de Salida / Consola */
+    .output-screen {
+      margin-top: 30px;
+      background-color: #000;
+      border: 3px solid #555;
+      padding: 15px;
+      border-radius: 6px;
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+      font-size: 16px;
+      color: #ffff55;
+    }
+
+    .code-tag {
+      color: #ff55ff;
+      font-weight: bold;
+    }
+
+    /* ESTILOS DEL MODAL INTERACTIVO */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-card {
+      background-color: #4a321a;
+      border: 6px solid #000;
+      padding: 30px;
+      border-radius: 12px;
+      width: 340px;
+      text-align: center;
+      box-shadow: 0px 0px 20px rgba(0,0,0,0.8);
+      animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes modalPop {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-title {
+      color: #ffff55;
+      font-size: 20px;
+      margin-bottom: 15px;
+      text-shadow: 2px 2px #000;
+    }
+
+    .modal-display {
+      background-color: #8b8b8b;
+      border: 4px solid #373737;
+      border-right-color: #fff;
+      border-bottom-color: #fff;
+      font-size: 22px;
+      font-weight: bold;
+      color: #000;
+      padding: 15px;
+      margin: 15px 0;
+      box-shadow: inset 3px 3px 0px #000;
+      min-height: 40px;
+    }
+
+    .close-btn {
+      background-color: #ff5555;
+      box-shadow: 0px 4px 0px #aa0000;
+      color: #fff;
+      margin-bottom: 0;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📦 ¡Aprende Variables con Minecraft!</h1>
+  <p>Una <strong>variable</strong> es como un cofre: le pones un <strong>nombre</strong> y adentro guardas un <strong>valor</strong>.</p>
+
+  <div class="container">
+    
+    <!-- Cofre de Minecraft / Variable -->
+    <div class="chest-box">
+      <div class="chest-title">Nombre de la variable: <br><span style="color:#55ffff;">miCofre</span></div>
+      
+      <!-- SVG Pixel Art del Cofre -->
+      <div class="chest-graphic" id="chestGraphic">
+        <svg viewBox="0 0 32 32" width="100%" height="100%" style="image-rendering: pixelated;">
+          <rect x="2" y="4" width="28" height="24" fill="#000" />
+          <rect x="4" y="6" width="24" height="20" fill="#a0522d" />
+          <rect x="4" y="6" width="24" height="2" fill="#cd853f" />
+          <rect x="4" y="24" width="24" height="2" fill="#5c2e0b" />
+          <rect x="4" y="6" width="2" height="20" fill="#2b1704" />
+          <rect x="26" y="6" width="2" height="20" fill="#2b1704" />
+          <line x1="4" y1="15" x2="28" y2="15" stroke="#2b1704" stroke-width="2" />
+          <rect x="14" y="13" width="4" height="6" fill="#000" />
+          <rect x="15" y="14" width="2" height="4" fill="#c0c0c0" />
+        </svg>
+      </div>
+
+      <div>Valor guardado adentro:</div>
+      <div class="slot" id="chestContent"><i>(Vacío)</i></div>
+    </div>
+
+    <!-- Panel de Control -->
+    <div class="controls">
+      <h3>1. Guardar algo (Asignar)</h3>
+      <label for="itemSelect">Elige un ítem:</label>
+      <select id="itemSelect">
+        <option value="💎 64 Diamantes">💎 64 Diamantes</option>
+        <option value="🗡️ Espada de Hierro">🗡️ Espada de Hierro</option>
+        <option value="🍎 10 Manzanas doradas">🍎 10 Manzanas doradas</option>
+        <option value="🥩 32 Chuletones">🥩 32 Chuletones</option>
+      </select>
+      
+      <button onclick="guardarEnVariable()">📥 Guardar en la Variable</button>
+
+      <hr style="border-color: #444; margin: 20px 0;">
+
+      <h3>2. Llamar a la Variable (Leer)</h3>
+      <label for="variableNameInput">Escribe el nombre de la variable:</label>
+      <input type="text" id="variableNameInput" value="miCofre" placeholder="Ej: miCofre">
+      
+      <button class="read-btn" onclick="leerVariable()">🔍 Llamar variable por su nombre</button>
+    </div>
+
+  </div>
+
+  <!-- Explicación en consola -->
+  <div class="output-screen">
+    <strong>Explicación del código:</strong>
+    <div id="codeExplanation" style="margin-top: 8px; color: #fff;">
+      Elige un ítem y haz clic en <b>"Guardar en la Variable"</b>. Luego prueba a llamarla por su nombre.
+    </div>
+  </div>
+
+  <!-- MODAL / VENTANA EMERGENTE -->
+  <div class="modal-overlay" id="valueModal">
+    <div class="modal-card">
+      <div class="modal-title" id="modalHeader">🔍 Buscando variable...</div>
+      <div style="font-size: 14px; color: #ddd;" id="modalSubtext"></div>
+      <div class="modal-display" id="modalValue"></div>
+      <button class="close-btn" onclick="cerrarModal()">Entendido</button>
+    </div>
+  </div>
+
+  <script>
+    // Declaración de la Variable en JS
+    let miCofre = undefined;
+
+    function guardarEnVariable() {
+      const selector = document.getElementById('itemSelect');
+      const valorSeleccionado = selector.value;
+      
+      miCofre = valorSeleccionado;
+
+      // Animación de rebote al guardar
+      const chestGraphic = document.getElementById('chestGraphic');
+      chestGraphic.classList.add('bounce');
+      setTimeout(() => chestGraphic.classList.remove('bounce'), 250);
+
+      document.getElementById('chestContent').innerText = miCofre;
+
+      document.getElementById('codeExplanation').innerHTML = `
+        ¡Guardaste un nuevo objeto!<br>
+        En código esto se escribe: <span class="code-tag">let miCofre = "${miCofre}";</span><br>
+        <em>Ahora la variable <b>miCofre</b> guarda este valor en memoria.</em>
+      `;
+    }
+
+    function leerVariable() {
+      const nombreIngresado = document.getElementById('variableNameInput').value.trim();
+      const modal = document.getElementById('valueModal');
+      const modalHeader = document.getElementById('modalHeader');
+      const modalSubtext = document.getElementById('modalSubtext');
+      const modalValue = document.getElementById('modalValue');
+      const pantalla = document.getElementById('codeExplanation');
+
+      // Validamos si escribió el nombre correcto de la variable
+      if (nombreIngresado === "miCofre") {
+        modalHeader.innerText = "✨ ¡Variable Encontrada!";
+        modalSubtext.innerHTML = `Llamaste a <b style="color:#55ffff;">${nombreIngresado}</b> y te devolvió:`;
+        
+        if (miCofre === undefined) {
+          modalValue.innerHTML = "<i>(Vacío / undefined)</i>";
+          pantalla.innerHTML = `
+            Llamaste a <span class="code-tag">miCofre</span>, pero todavía no le guardaste nada.<br>
+            En código: <span class="code-tag">console.log(miCofre);</span> ➔ Resultado: <i>undefined</i>
+          `;
+        } else {
+          modalValue.innerText = miCofre;
+          pantalla.innerHTML = `
+            ¡Llamaste a la variable por su nombre exacto!<br>
+            En código: <span class="code-tag">console.log(miCofre);</span><br>
+            Resultado devuelto: <strong>"${miCofre}"</strong>.
+          `;
+        }
+      } else {
+        // Si escribe un nombre equivocado
+        modalHeader.innerText = "❌ Error: Variable no encontrada";
+        modalSubtext.innerHTML = `Intentaste llamar a <b style="color:#ff5555;">"${nombreIngresado}"</b>, pero esa variable no existe.`;
+        modalValue.innerHTML = "<span style='color: #aa0000;'>ReferenceError</span>";
+        
+        pantalla.innerHTML = `
+          La computadora buscó <span class="code-tag">${nombreIngresado}</span> y no la encontró.<br>
+          <em>¡Recuerda que debes usar el nombre exacto de la variable (<b>miCofre</b>)!</em>
+        `;
+      }
+
+      // Mostrar el modal
+      modal.style.display = "flex";
+    }
+
+    function cerrarModal() {
+      document.getElementById('valueModal').style.display = "none";
+    }
+  </script>
+
+</body>
+</html>
