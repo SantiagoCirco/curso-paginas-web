@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Creador de Formularios Web - Multi-Step con Validaciones</title>
+    <style>
+        :root {
+            --bg: #1e1e2e;
+            --card-bg: #2b2b3d;
+            --accent: #ff79c6;
+            --cyan: #8be9fd;
+            --green: #50fa7b;
+            --yellow: #f1fa8c;
+            --orange: #ffb86c;
+            --red: #ff5555;
+            --text: #f8f8f2;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 10px 0 20px 0;
+        }
+
+        h1 { color: var(--accent); font-size: 2rem; margin-bottom: 5px; }
+        p.subtitle { color: var(--cyan); font-size: 1rem; margin-top: 0; }
+
+        /* BARRA DE PROGRESO DE STEPS */
+        .stepper-bar {
+            display: flex;
+            justify-content: space-between;
+            max-width: 800px;
+            margin: 0 auto 25px auto;
+            position: relative;
+        }
+
+        .stepper-bar::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #45475a;
+            z-index: 1;
+            transform: translateY(-50%);
+        }
+
+        .step-pill {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #313244;
+            color: #a6adc8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            z-index: 2;
+            border: 3px solid #45475a;
+            transition: all 0.3s;
+        }
+
+        .step-pill.active {
+            background: var(--accent);
+            color: #11111b;
+            border-color: var(--yellow);
+            transform: scale(1.15);
+            box-shadow: 0 0 12px var(--accent);
+        }
+
+        .step-pill.completed {
+            background: var(--green);
+            color: #11111b;
+            border-color: var(--green);
+        }
+
+        /* CONTENEDOR PRINCIPAL GRID */
+        .workspace {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 980px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+
+        @media (max-width: 768px) {
+            .workspace { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: #181825;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #45475a;
+        }
+
+        h2 { color: var(--cyan); margin-top: 0; font-size: 1.3rem; }
+
+        .code-inline {
+            background: #313244;
+            color: var(--yellow);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        /* BLOQUES DE CÓDIGO HTML DESTACADOS (SNIPPETS) */
+        pre {
+            background: #11111b;
+            color: var(--green);
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid var(--accent);
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        pre .tag { color: var(--accent); }
+        pre .attr { color: var(--cyan); }
+        pre .val { color: var(--yellow); }
+
+        /* FORMULARIO Y ESTILOS */
+        fieldset {
+            border: 2px dashed var(--accent);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #1e1e2e;
+        }
+
+        legend {
+            color: var(--accent);
+            font-weight: bold;
+            padding: 0 8px;
+            background: var(--card-bg);
+            border-radius: 4px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--cyan);
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        label:hover { text-decoration: underline; }
+
+        input[type="text"], input[type="email"], input[type="tel"], textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 2px solid #45475a;
+            background: #11111b;
+            color: #fff;
+            box-sizing: border-box;
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--cyan);
+            outline: none;
+        }
+
+        input:invalid:not(:placeholder-shown), textarea:invalid:not(:placeholder-shown) {
+            border-color: var(--red);
+        }
+
+        input:valid:not(:placeholder-shown), textarea:valid:not(:placeholder-shown) {
+            border-color: var(--green);
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background: var(--green);
+            color: #11111b;
+            font-weight: bold;
+            font-size: 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background: #40a02b;
+            transform: scale(1.02);
+        }
+
+        /* CAJAS INFORMATIVAS Y VALIDACIONES */
+        .tip-box {
+            background: #313244;
+            border-left: 4px solid var(--yellow);
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 0.88rem;
+        }
+
+        .validation-box {
+            background: #282a36;
+            border-left: 4px solid var(--orange);
+            padding: 10px 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+
+        .validation-box strong {
+            color: var(--orange);
+        }
+
+        /* BOTONES DE NAVEGACIÓN MULTI-STEP */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .btn-step {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .btn-prev { background: #45475a; color: #fff; }
+        .btn-prev:hover { background: #585b70; }
+
+        .btn-next { background: var(--accent); color: #11111b; }
+        .btn-next:hover { background: #ff92d0; }
+
+        .btn-disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .step-content { display: none; }
+        .step-content.active { display: block; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🎮 Formulario Gamer: ¡Nivel por Nivel!</h1>
+        <p class="subtitle">Aprende a construir y validar formularios web en 6 pasos</p>
+    </header>
+
+    <!-- INDICADOR DE PASOS (6 PASOS) -->
+    <div class="stepper-bar">
+        <div class="step-pill active" id="pill-1">1</div>
+        <div class="step-pill" id="pill-2">2</div>
+        <div class="step-pill" id="pill-3">3</div>
+        <div class="step-pill" id="pill-4">4</div>
+        <div class="step-pill" id="pill-5">5</div>
+        <div class="step-pill" id="pill-6">6</div>
+    </div>
+
+    <!-- WORKSPACE PRINCIPAL CON FORMULARIO ÚNICO -->
+    <form id="gamerForm" onsubmit="alert('🎉 ¡ENVÍO EXITOSO! Todos los campos superaron las validaciones correctamente.'); return false;">
+        
+        <div class="workspace">
+            
+            <!-- PANEL IZQUIERDO: EXPLICACIÓN TEÓRICA Y SNIPPETS -->
+            <div class="card">
+                
+                <!-- PASO 1 TEORÍA Y CÓDIGO -->
+                <div class="step-content active" id="theory-1">
+                    <h2>📦 Paso 1: Form, Fieldset y Legend</h2>
+                    <div class="tip-box">
+                        <span class="code-inline">&lt;form&gt;</span> envuelve todo el formulario.<br>
+                        <span class="code-inline">&lt;fieldset&gt;</span> crea la caja organizadora.<br>
+                        <span class="code-inline">&lt;legend&gt;</span> le coloca el título justo en el borde superior de la caja.
+                    </div>
+
+                    <!-- SNIPPET PASO 1 -->
+                    <pre><code>&lt;<span class="tag">form</span>&gt;
+  &lt;<span class="tag">fieldset</span>&gt;
+    &lt;<span class="tag">legend</span>&gt;Perfil del Gamer&lt;/<span class="tag">legend</span>&gt;
+
+    &lt;!-- Aquí irán los campos --&gt;
+
+  &lt;/<span class="tag">fieldset</span>&gt;
+&lt;/<span class="tag">form</span>&gt;</code></pre>
+
+                    <div class="validation-box">
+                        <strong>💡 Concepto clave:</strong>
+                        <p>Agrupar campos ayuda a mantener el formulario ordenado, limpio y comprensible para el usuario.</p>
+                    </div>
+                </div>
+
+                <!-- PASO 2 TEORÍA Y CÓDIGO -->
+                <div class="step-content" id="theory-2">
+                    <h2>⚡ Paso 2: La Conexión Label - Input</h2>
+                    <div class="tip-box">
+                        El atributo <span class="code-inline">for="..."</span> del label debe ser <strong>exactamente igual</strong> al <span class="code-inline">id="..."</span> del input.
+                    </div>
+
+                    <!-- SNIPPET PASO 2 -->
+                    <pre><code>&lt;<span class="tag">label</span> <span class="attr">for</span>=<span class="val">"gamertag"</span>&gt;GamerTag:&lt;/<span class="tag">label</span>&gt;
+&lt;<span class="tag">input</span> 
+  <span class="attr">type</span>=<span class="val">"text"</span> 
+  <span class="attr">id</span>=<span class="val">"gamertag"</span> 
+  <span class="attr">required</span> 
+  <span class="attr">minlength</span>=<span class="val">"3"</span> 
+  <span class="attr">maxlength</span>=<span class="val">"12"</span>&gt;</code></pre>
+
+                    <div class="validation-box">
+                        <strong>🛡️ Atributos en este código:</strong>
+                        <ul>
+                            <li><span class="code-inline">required</span>: Campo obligatorio.</li>
+                            <li><span class="code-inline">minlength="3"</span> / <span class="code-inline">maxlength="12"</span>: Límite de caracteres.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- PASO 3 TEORÍA Y CÓDIGO -->
+                <div class="step-content" id="theory-3">
+                    <h2>📧 Paso 3: Input Email y Validación</h2>
+                    <div class="tip-box">
+                        <span class="code-inline">type="email"</span> valida de forma automática que el valor ingresado sea una dirección de correo válida.
+                    </div>
+
+                    <!-- SNIPPET PASO 3 -->
+                    <pre><code>&lt;<span class="tag">label</span> <span class="attr">for</span>=<span class="val">"correo"</span>&gt;Correo del Tutor:&lt;/<span class="tag">label</span>&gt;
+&lt;<span class="tag">input</span> 
+  <span class="attr">type</span>=<span class="val">"email"</span> 
+  <span class="attr">id</span>=<span class="val">"correo"</span> 
+  <span class="attr">placeholder</span>=<span class="val">"ejemplo@email.com"</span> 
+  <span class="attr">required</span>&gt;</code></pre>
+
+                    <div class="validation-box">
+                        <strong>🛡️ Validación Autoconfigurada:</strong>
+                        <p>El navegador exige la presencia del símbolo <span class="code-inline">@</span> y un dominio (como <span class="code-inline">.com</span>).</p>
+                    </div>
+                </div>
+
+                <!-- PASO 4 TEORÍA Y CÓDIGO -->
+                <div class="step-content" id="theory-4">
+                    <h2>📞 Paso 4: Teléfono y Patrón (Regex)</h2>
+                    <div class="tip-box">
+                        Usa <span class="code-inline">type="tel"</span> y el atributo <span class="code-inline">pattern</span> para definir la regla del formato.
+                    </div>
+
+                    <!-- SNIPPET PASO 4 -->
+                    <pre><code>&lt;<span class="tag">label</span> <span class="attr">for</span>=<span class="val">"telefono"</span>&gt;Teléfono:&lt;/<span class="tag">label</span>&gt;
+&lt;<span class="tag">input</span> 
+  <span class="attr">type</span>=<span class="val">"tel"</span> 
+  <span class="attr">id</span>=<span class="val">"telefono"</span> 
+  <span class="attr">pattern</span>=<span class="val">"[0-9]{10}"</span> 
+  <span class="attr">placeholder</span>=<span class="val">"1122334455"</span>&gt;</code></pre>
+
+                    <div class="validation-box">
+                        <strong>🛡️ ¿Qué significa <span class="code-inline">pattern="[0-9]{10}"</span>?</strong>
+                        <ul>
+                            <li><span class="code-inline">[0-9]</span>: Solo permite dígitos numéricos.</li>
+                            <li><span class="code-inline">{10}</span>: Exige exactamente 10 números seguidos.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- PASO 5 TEORÍA Y CÓDIGO -->
+                <div class="step-content" id="theory-5">
+                    <h2>📝 Paso 5: Textarea (Texto Largo)</h2>
+                    <div class="tip-box">
+                        <span class="code-inline">&lt;textarea&gt;</span> no usa el atributo <span class="code-inline">type</span> y requiere etiqueta de cierre <span class="code-inline">&lt;/textarea&gt;</span>.
+                    </div>
+
+                    <!-- SNIPPET PASO 5 -->
+                    <pre><code>&lt;<span class="tag">label</span> <span class="attr">for</span>=<span class="val">"bio"</span>&gt;Estrategia de juego:&lt;/<span class="tag">label</span>&gt;
+&lt;<span class="tag">textarea</span> 
+  <span class="attr">id</span>=<span class="val">"bio"</span> 
+  <span class="attr">rows</span>=<span class="val">"4"</span> 
+  <span class="attr">minlength</span>=<span class="val">"10"</span> 
+  <span class="attr">maxlength</span>=<span class="val">"200"</span>&gt;&lt;/<span class="tag">textarea</span>&gt;</code></pre>
+
+                    <div class="validation-box">
+                        <strong>🛡️ Atributos en este código:</strong>
+                        <ul>
+                            <li><span class="code-inline">rows="4"</span>: Define el alto inicial en líneas.</li>
+                            <li><span class="code-inline">minlength="10"</span>: Mínimo 10 caracteres.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- PASO 6 TEORÍA Y CÓDIGO -->
+                <div class="step-content" id="theory-6">
+                    <h2>🚀 Paso 6: Botón de Envío (Submit)</h2>
+                    <div class="tip-box">
+                        El atributo <span class="code-inline">value</span> define el texto visible dentro del botón.
+                    </div>
+
+                    <!-- SNIPPET PASO 6 -->
+                    <pre><code>&lt;!-- El botón que dispara el envío --&gt;
+&lt;<span class="tag">input</span> 
+  <span class="attr">type</span>=<span class="val">"submit"</span> 
+  <span class="attr">value</span>=<span class="val">"🚀 ¡Enviar Formulario!"</span>&gt;</code></pre>
+
+                    <div class="validation-box">
+                        <strong>💡 Funcionamiento:</strong>
+                        <p>Al hacer clic en <span class="code-inline">type="submit"</span>, el navegador revisa automáticamente que todos los campos cumplan sus validaciones.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- PANEL DERECHO: INTERFACE DE PRÁCTICA -->
+            <div class="card">
+                <h2>🧪 Laboratorio de Práctica</h2>
+
+                <fieldset>
+                    <legend id="fieldset-title">Paso 1 de 6</legend>
+
+                    <!-- PASO 1 CAMPOS -->
+                    <div class="step-content active" id="field-1">
+                        <p style="color: var(--cyan); line-height: 1.5;">
+                            Mira cómo la etiqueta <span class="code-inline">&lt;fieldset&gt;</span> crea este recuadro punteado rosa y la etiqueta <span class="code-inline">&lt;legend&gt;</span> coloca el título arriba.
+                        </p>
+                        <p style="color: var(--yellow); font-size: 0.9rem;">
+                            👇 Haz clic en "Siguiente" para comenzar a agregar inputs dentro de esta estructura.
+                        </p>
+                    </div>
+
+                    <!-- PASO 2 CAMPOS -->
+                    <div class="step-content" id="field-2">
+                        <div class="form-group">
+                            <label for="gamertag">👤 Nombre de Jugador (GamerTag):</label>
+                            <input 
+                                type="text" 
+                                id="gamertag" 
+                                name="gamertag" 
+                                placeholder="Ej: Ninja99" 
+                                required 
+                                minlength="3" 
+                                maxlength="12"
+                            >
+                            <small style="color: var(--yellow); font-size: 0.8rem;">(Obligatorio | De 3 a 12 caracteres)</small>
+                        </div>
+                    </div>
+
+                    <!-- PASO 3 CAMPOS -->
+                    <div class="step-content" id="field-3">
+                        <div class="form-group">
+                            <label for="correo">📧 Correo Electrónico del Tutor:</label>
+                            <input 
+                                type="email" 
+                                id="correo" 
+                                name="correo" 
+                                placeholder="tutor@gmail.com" 
+                                required
+                            >
+                            <small style="color: var(--yellow); font-size: 0.8rem;">(Obligatorio | Debe incluir @ y dominio)</small>
+                        </div>
+                    </div>
+
+                    <!-- PASO 4 CAMPOS -->
+                    <div class="step-content" id="field-4">
+                        <div class="form-group">
+                            <label for="telefono">📞 Teléfono (10 dígitos sin espacios):</label>
+                            <input 
+                                type="tel" 
+                                id="telefono" 
+                                name="telefono" 
+                                placeholder="1122334455" 
+                                pattern="[0-9]{10}"
+                            >
+                            <small style="color: var(--yellow); font-size: 0.8rem;">(Opcional | Formato: 10 números exactamente)</small>
+                        </div>
+                    </div>
+
+                    <!-- PASO 5 CAMPOS -->
+                    <div class="step-content" id="field-5">
+                        <div class="form-group">
+                            <label for="bio">📝 Cuéntanos tu estrategia de juego:</label>
+                            <textarea 
+                                id="bio" 
+                                name="bio" 
+                                rows="4" 
+                                placeholder="Escribe tu mensaje aquí..."
+                                minlength="10"
+                                maxlength="200"
+                            ></textarea>
+                            <small style="color: var(--yellow); font-size: 0.8rem;">(Opcional | Mínimo 10, máximo 200 caracteres)</small>
+                        </div>
+                    </div>
+
+                    <!-- PASO 6 CAMPOS -->
+                    <div class="step-content" id="field-6">
+                        <p style="color: var(--cyan); margin-bottom: 15px;">
+                            ¡Has configurado todos los campos! Haz clic abajo para probar la validación completa.
+                        </p>
+                        
+                        <!-- INPUT SUBMIT -->
+                        <input type="submit" value="🚀 ¡Probar y Enviar Formulario!">
+                    </div>
+
+                </fieldset>
+
+                <!-- BOTONES NAVEGACIÓN -->
+                <div class="controls">
+                    <button type="button" class="btn-step btn-prev btn-disabled" id="btnPrev" onclick="changeStep(-1)">👈 Anterior</button>
+                    <button type="button" class="btn-step btn-next" id="btnNext" onclick="changeStep(1)">Siguiente 👉</button>
+                </div>
+
+            </div>
+
+        </div>
+    </form>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 6;
+
+        const fieldsetTitles = [
+            "Paso 1: Estructura Básica",
+            "Paso 2: Información Personal",
+            "Paso 3: Datos de Contacto",
+            "Paso 4: Teléfono Móvil",
+            "Paso 5: Mensaje / Biografía",
+            "Paso 6: Confirmación y Envío"
+        ];
+
+        function validateCurrentStep() {
+            // Obtenemos los campos del paso actual
+            const currentFieldContainer = document.getElementById(`field-${currentStep}`);
+            const inputs = currentFieldContainer.querySelectorAll('input, textarea');
+
+            for (let input of inputs) {
+                // reportValidity muestra el mensaje emergente si falla la validación
+                if (!input.checkValidity()) {
+                    input.reportValidity();
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function updateStepUI() {
+            // Actualizar pestañas/pills de avance superior
+            for (let i = 1; i <= totalSteps; i++) {
+                const pill = document.getElementById(`pill-${i}`);
+                const theory = document.getElementById(`theory-${i}`);
+                const field = document.getElementById(`field-${i}`);
+
+                pill.classList.remove('active', 'completed');
+                theory.classList.remove('active');
+                field.classList.remove('active');
+
+                if (i === currentStep) {
+                    pill.classList.add('active');
+                    theory.classList.add('active');
+                    field.classList.add('active');
+                } else if (i < currentStep) {
+                    pill.classList.add('completed');
+                }
+            }
+
+            // Actualizar título del Fieldset
+            document.getElementById('fieldset-title').innerText = fieldsetTitles[currentStep - 1];
+
+            // Deshabilitar/Habilitar botones de navegación
+            const btnPrev = document.getElementById('btnPrev');
+            const btnNext = document.getElementById('btnNext');
+
+            if (currentStep === 1) {
+                btnPrev.classList.add('btn-disabled');
+            } else {
+                btnPrev.classList.remove('btn-disabled');
+            }
+
+            if (currentStep === totalSteps) {
+                btnNext.style.display = 'none';
+            } else {
+                btnNext.style.display = 'block';
+            }
+        }
+
+        function changeStep(delta) {
+            // Si intenta avanzar, primero validamos el paso actual
+            if (delta > 0 && !validateCurrentStep()) {
+                return; // Se detiene y no avanza si no cumple las validaciones
+            }
+
+            const newStep = currentStep + delta;
+            
+            if (newStep >= 1 && newStep <= totalSteps) {
+                currentStep = newStep;
+                updateStepUI();
+            }
+        }
+    </script>
+
+</body>
+</html>
