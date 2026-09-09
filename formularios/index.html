@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ Web Master Quiz - Desafío HTML & CSS</title>
+    <style>
+        :root {
+            --bg: #1e1e2e;
+            --card-bg: #2b2b3d;
+            --accent: #ff79c6;
+            --cyan: #8be9fd;
+            --green: #50fa7b;
+            --yellow: #f1fa8c;
+            --red: #ff5555;
+            --purple: #bd93f9;
+            --text: #f8f8f2;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 90vh;
+        }
+
+        .quiz-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px 30px;
+            max-width: 650px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            border: 2px solid #45475a;
+            position: relative;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: var(--accent);
+            font-size: 1.8rem;
+            margin: 0 0 5px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #181825;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .score { color: var(--yellow); }
+        .counter { color: var(--cyan); }
+
+        /* BARRA DE PROGRESO */
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background: #313244;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent), var(--cyan));
+            transition: width 0.4s ease;
+        }
+
+        /* CARD DE LA PREGUNTA */
+        .question-box {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .code-tag {
+            background: #181825;
+            color: var(--yellow);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-family: monospace;
+            border: 1px solid #45475a;
+        }
+
+        /* OPCIONES */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .btn-option {
+            background: #181825;
+            border: 2px solid #45475a;
+            color: var(--text);
+            padding: 14px 18px;
+            border-radius: 10px;
+            font-size: 1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 600;
+        }
+
+        .btn-option:hover:not([disabled]) {
+            border-color: var(--cyan);
+            background: #313244;
+            transform: translateY(-2px);
+        }
+
+        .btn-option.correct {
+            background: rgba(80, 250, 123, 0.2) !important;
+            border-color: var(--green) !important;
+            color: var(--green) !important;
+        }
+
+        .btn-option.incorrect {
+            background: rgba(255, 85, 85, 0.2) !important;
+            border-color: var(--red) !important;
+            color: var(--red) !important;
+        }
+
+        /* FEEDBACK EXPLICATIVO */
+        .feedback-box {
+            display: none;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .feedback-box.show { display: block; }
+        .feedback-box.correct-bg { background: #1b382b; border-left: 4px solid var(--green); color: #a6f3b9; }
+        .feedback-box.incorrect-bg { background: #3a1e28; border-left: 4px solid var(--red); color: #f8a1a1; }
+
+        /* BOTÓN SIGUIENTE */
+        .btn-next {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            color: #11111b;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            display: none;
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        .btn-next.show { display: block; }
+        .btn-next:hover { background: #ff92d0; transform: scale(1.01); }
+
+        /* PANTALLA FINAL */
+        .results-card {
+            display: none;
+            text-align: center;
+            padding: 20px 10px;
+        }
+
+        .results-card h2 { color: var(--yellow); font-size: 2rem; margin-bottom: 10px; }
+        .results-card .final-score { font-size: 1.5rem; color: var(--cyan); margin-bottom: 20px; }
+        .results-card .badge { font-size: 4rem; margin: 15px 0; }
+        .btn-restart {
+            background: var(--green);
+            color: #11111b;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .btn-restart:hover { background: #40a02b; }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <header>
+            <h1>⚡ Web Master Quiz</h1>
+        </header>
+
+        <!-- PANEL DE PUNTOS Y PROGRESO -->
+        <div id="quiz-ui">
+            <div class="score-board">
+                <span class="counter" id="question-counter">Pregunta 1 de 8</span>
+                <span class="score" id="score-text">Puntos: 0</span>
+            </div>
+
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+
+            <!-- PREGUNTA Y OPCIONES -->
+            <div class="question-box" id="question-text">Cargando pregunta...</div>
+
+            <div class="options-grid" id="options-container"></div>
+
+            <div class="feedback-box" id="feedback-box"></div>
+
+            <button class="btn-next" id="btn-next" onclick="nextQuestion()">Siguiente Pregunta 👉</button>
+        </div>
+
+        <!-- PANTALLA DE RESULTADOS FINALES -->
+        <div class="results-card" id="results-card">
+            <div class="badge" id="result-badge">🏆</div>
+            <h2 id="result-title">¡Felicitaciones!</h2>
+            <p class="final-score" id="result-score">Puntaje: 8 / 8</p>
+            <p id="result-msg" style="color: #a6adc8; margin-bottom: 25px;"></p>
+            <button class="btn-restart" onclick="restartQuiz()">🔄 Jugar de nuevo</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "¿Cuál es la etiqueta HTML correcta para definir el título principal y más importante de una página?",
+                options: ["&lt;p&gt;", "&lt;title&gt;", "&lt;h1&gt;", "&lt;heading&gt;"],
+                correct: 2,
+                explanation: "¡Correcto! &lt;h1&gt; define el título de mayor nivel jerárquico en la página."
+            },
+            {
+                question: "¿Qué etiqueta utilizamos si queremos colocar un enlace (link) hacia otra página web?",
+                options: ["&lt;a&gt;", "&lt;link&gt;", "&lt;url&gt;", "&lt;goto&gt;"],
+                correct: 0,
+                explanation: "¡Muy bien! La etiqueta &lt;a&gt; (de anchor) crea enlaces mediante el atributo href."
+            },
+            {
+                question: "Para mostrar una imagen con &lt;img&gt;, ¿cuál es el atributo que indica la ruta o archivo de la foto?",
+                options: ["url", "src", "link", "href"],
+                correct: 1,
+                explanation: "¡Eso es! 'src' significa 'source' (fuente) e indica la ubicación del archivo de imagen."
+            },
+            {
+                question: "En CSS, ¿cuál es la propiedad adecuada para cambiar el color de las letras de un texto?",
+                options: ["text-color", "font-color", "color", "style-color"],
+                correct: 2,
+                explanation: "¡Excelente! La propiedad CSS se llama simplemente 'color'."
+            },
+            {
+                question: "Si queremos pintar todo el fondo de nuestra página de color azul, ¿qué propiedad CSS usamos?",
+                options: ["background-color", "page-color", "bg-style", "color-bg"],
+                correct: 0,
+                explanation: "¡Perfecto! 'background-color' cambia el color del fondo de cualquier elemento."
+            },
+            {
+                question: "¿Qué etiqueta HTML crea una lista ordenada por puntos/viñetas (desordenada)?",
+                options: ["&lt;ol&gt;", "&lt;list&gt;", "&lt;ul&gt;", "&lt;li&gt;"],
+                correct: 2,
+                explanation: "¡Exacto! &lt;ul&gt; significa 'Unordered List'. Cada ítem adentro usa &lt;li&gt;."
+            },
+            {
+                question: "Dentro de un formulario, ¿qué etiqueta y tipo usamos para crear una casilla de texto donde escribir el nombre?",
+                options: ["&lt;input type=\"text\"&gt;", "&lt;input type=\"box\"&gt;", "&lt;textfield&gt;", "&lt;write&gt;"],
+                correct: 0,
+                explanation: "¡Genial! &lt;input type=\"text\"&gt; permite escribir texto en una línea corta."
+            },
+            {
+                question: "¿En qué etiqueta conectamos nuestro archivo de hojas de estilo external.css dentro del HTML?",
+                options: ["&lt;script&gt;", "&lt;link&gt;", "&lt;css&gt;", "&lt;style-ref&gt;"],
+                correct: 1,
+                explanation: "¡Perfecto! Usamos &lt;link rel=\"stylesheet\" href=\"...\"&gt; dentro de la sección &lt;head&gt;."
+            }
+        ];
+
+        let currentQ = 0;
+        let score = 0;
+        let answered = false;
+
+        function loadQuestion() {
+            answered = false;
+            const q = questions[currentQ];
+
+            // Actualizar contadores y barra
+            document.getElementById('question-counter').innerText = `Pregunta ${currentQ + 1} de ${questions.length}`;
+            document.getElementById('score-text').innerText = `Puntos: ${score}`;
+            document.getElementById('progress-bar').style.width = `${((currentQ) / questions.length) * 100}%`;
+
+            // Ocultar feedback y botón siguiente
+            document.getElementById('feedback-box').className = 'feedback-box';
+            document.getElementById('btn-next').className = 'btn-next';
+
+            // Cargar texto de pregunta
+            document.getElementById('question-text').innerHTML = q.question;
+
+            // Cargar botones de opciones
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-option';
+                btn.innerHTML = `<span>${opt}</span>`;
+                btn.onclick = () => selectOption(index);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectOption(index) {
+            if (answered) return;
+            answered = true;
+
+            const q = questions[currentQ];
+            const buttons = document.querySelectorAll('.btn-option');
+            const feedbackBox = document.getElementById('feedback-box');
+
+            buttons.forEach(btn => btn.disabled = true);
+
+            if (index === q.correct) {
+                score++;
+                buttons[index].classList.add('correct');
+                buttons[index].innerHTML += ' <span>✅</span>';
+                feedbackBox.innerHTML = q.explanation;
+                feedbackBox.className = 'feedback-box show correct-bg';
+            } else {
+                buttons[index].classList.add('incorrect');
+                buttons[index].innerHTML += ' <span>❌</span>';
+                buttons[q.correct].classList.add('correct');
+                buttons[q.correct].innerHTML += ' <span>✅</span>';
+                feedbackBox.innerHTML = `<strong>¡Casi!</strong> La respuesta correcta era la opción recomendada.<br>${q.explanation}`;
+                feedbackBox.className = 'feedback-box show incorrect-bg';
+            }
+
+            document.getElementById('score-text').innerText = `Puntos: ${score}`;
+            document.getElementById('btn-next').classList.add('show');
+        }
+
+        function nextQuestion() {
+            currentQ++;
+            if (currentQ < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-ui').style.display = 'none';
+            const resultsCard = document.getElementById('results-card');
+            resultsCard.style.display = 'block';
+
+            document.getElementById('result-score').innerText = `Puntaje Final: ${score} de ${questions.length}`;
+
+            const badge = document.getElementById('result-badge');
+            const title = document.getElementById('result-title');
+            const msg = document.getElementById('result-msg');
+
+            if (score === 8) {
+                badge.innerText = '🏆';
+                title.innerText = '¡Nivel Leyenda Web!';
+                msg.innerText = '¡Dominas HTML y CSS a la perfección! Estás listo para crear cualquier sitio web.';
+            } else if (score >= 5) {
+                badge.innerText = '🥇';
+                title.innerText = '¡Gran Programador!';
+                msg.innerText = '¡Muy buen trabajo! Tienes bases muy sólidas de desarrollo web.';
+            } else {
+                badge.innerText = '🌱';
+                title.innerText = '¡Sigue Practicando!';
+                msg.innerText = 'Buen intento. Repasa los conceptos y vuelve a probar para conseguir la copa.';
+            }
+        }
+
+        function restartQuiz() {
+            currentQ = 0;
+            score = 0;
+            document.getElementById('results-card').style.display = 'none';
+            document.getElementById('quiz-ui').style.display = 'block';
+            loadQuestion();
+        }
+
+        // Iniciar Quiz
+        loadQuestion();
+    </script>
+</body>
+</html>
