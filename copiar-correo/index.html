@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador y Copiador de Correo</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    .card {
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      color: #f1f5f9;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    p.description {
+      color: #94a3b8;
+      font-size: 0.9rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Formulario e Inputs */
+    .input-group {
+      display: flex;
+      align-items: center;
+      background-color: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 0.5rem;
+      margin-bottom: 1.25rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .input-group:focus-within {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+    }
+
+    input[type="text"] {
+      background: transparent;
+      border: none;
+      color: #f8fafc;
+      font-size: 1rem;
+      padding: 0.5rem;
+      outline: none;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .at-symbol {
+      color: #38bdf8;
+      font-weight: bold;
+      font-size: 1.1rem;
+      padding: 0 0.25rem;
+    }
+
+    select {
+      background-color: #1e293b;
+      color: #38bdf8;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 0.5rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+    }
+
+    select:hover {
+      border-color: #475569;
+    }
+
+    /* Vista Previa */
+    .preview-box {
+      background-color: #090d16;
+      border: 1px dashed #334155;
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .preview-label {
+      font-size: 0.75rem;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.25rem;
+    }
+
+    .preview-email {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #38bdf8;
+      word-break: break-all;
+    }
+
+    .preview-email.placeholder {
+      color: #475569;
+      font-weight: normal;
+      font-style: italic;
+    }
+
+    /* Botón Copiar */
+    .btn-copy {
+      width: 100%;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 0.85rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-copy:hover {
+      background-color: #1d4ed8;
+    }
+
+    .btn-copy.copied {
+      background-color: #16a34a;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>✉️ Generador de Correo</h1>
+    <p class="description">Escribí tu nombre de usuario, elegí un dominio y copiá tu correo final.</p>
+
+    <!-- Campo de Entrada + Dominio -->
+    <div class="input-group">
+      <input 
+        type="text" 
+        id="username" 
+        placeholder="ejemplo: lucas.perez" 
+        oninput="actualizarCorreo()"
+        autocomplete="off"
+      >
+      <span class="at-symbol">@</span>
+      <select id="domain" onchange="actualizarCorreo()">
+        <option value="gmail.com">gmail.com</option>
+        <option value="outlook.com">outlook.com</option>
+        <option value="hotmail.com">hotmail.com</option>
+        <option value="yahoo.com">yahoo.com</option>
+        <option value="estudiantes.edu.ar">estudiantes.edu.ar</option>
+      </select>
+    </div>
+
+    <!-- Muestra el Resultado -->
+    <div class="preview-box">
+      <div class="preview-label">Resultado Final:</div>
+      <div class="preview-email placeholder" id="email-preview">Escribí tu usuario arriba...</div>
+    </div>
+
+    <!-- Botón de Copiado -->
+    <button class="btn-copy" id="btn-copy" onclick="copiarCorreo()">
+      📋 Copiar Correo
+    </button>
+  </div>
+
+  <script>
+    function obtenerCorreoCompleto() {
+      const username = document.getElementById('username').value.trim();
+      const domain = document.getElementById('domain').value;
+
+      if (!username) return '';
+      return `${username}@${domain}`;
+    }
+
+    function actualizarCorreo() {
+      const correo = obtenerCorreoCompleto();
+      const preview = document.getElementById('email-preview');
+
+      if (correo) {
+        preview.textContent = correo;
+        preview.classList.remove('placeholder');
+      } else {
+        preview.textContent = 'Escribí tu usuario arriba...';
+        preview.classList.add('placeholder');
+      }
+    }
+
+    function copiarCorreo() {
+      const correo = obtenerCorreoCompleto();
+      const btn = document.getElementById('btn-copy');
+
+      if (!correo) {
+        alert('⚠️ Por favor escribí un nombre de usuario antes de copiar.');
+        return;
+      }
+
+      // Copiar al portapapeles
+      navigator.clipboard.writeText(correo).then(() => {
+        // Feedback visual en el botón
+        btn.textContent = '✅ ¡Copiado!';
+        btn.classList.add('copied');
+
+        setTimeout(() => {
+          btn.textContent = '📋 Copiar Correo';
+          btn.classList.remove('copied');
+        }, 2000);
+      }).catch(() => {
+        alert('Ocurrió un error al intentar copiar.');
+      });
+    }
+  </script>
+
+</body>
+</html>
