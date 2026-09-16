@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diseño Web Responsivo</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #38bdf8;
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      transition: transform 0.2s ease;
+    }
+
+    .back-link:hover {
+      transform: translateX(-4px);
+    }
+
+    header {
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 0.5rem;
+    }
+
+    p.subtitle {
+      color: #94a3b8;
+      font-size: 0.95rem;
+    }
+
+    /* Stepper de 5 Pasos */
+    .stepper {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .stepper::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: #334155;
+      z-index: 1;
+      transform: translateY(-50%);
+    }
+
+    .step-btn {
+      position: relative;
+      z-index: 2;
+      background-color: #1e293b;
+      border: 2px solid #334155;
+      color: #94a3b8;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .step-btn.active {
+      border-color: #38bdf8;
+      background-color: #0284c7;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    }
+
+    .step-btn.completed {
+      border-color: #22c55e;
+      background-color: #15803d;
+      color: #ffffff;
+    }
+
+    /* Contenedor de Pasos */
+    .step-content {
+      display: none;
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .step-content.active {
+      display: block;
+    }
+
+    .step-header {
+      margin-bottom: 1.25rem;
+    }
+
+    .step-header span {
+      font-size: 0.8rem;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    .step-header h2 {
+      font-size: 1.3rem;
+      color: #f8fafc;
+      margin-top: 0.25rem;
+    }
+
+    .interactive-demo {
+      background-color: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin: 1.25rem 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .step-header__subtitle{
+      margin-bottom:1rem;
+    }
+
+    .screen-simulator {
+      width: 100%;
+      max-width: 650px;
+      min-height: 200px;
+      border: 2px dashed #475569;
+      border-radius: 8px;
+      transition: width 0.3s ease;
+      background-color: #0f172a;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    /* Componentes Simulados de Sitio Web (Paso 1) */
+    .web-header {
+      background-color: #3b82f6;
+      color: white;
+      padding: 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .web-body {
+      display: flex;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .web-main {
+      background-color: #334155;
+      color: #f8fafc;
+      padding: 12px;
+      border-radius: 4px;
+      flex: 2;
+      font-size: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .web-sidebar {
+      background-color: #a855f7;
+      color: white;
+      padding: 8px;
+      border-radius: 4px;
+      flex: 1;
+      font-size: 0.75rem;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* DIAGRAMA DE FLUJO (Paso 3) */
+    .flow-diagram {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.85rem;
+      width: 100%;
+      max-width: 500px;
+      margin: 1rem 0;
+    }
+
+    .flow-card {
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      padding: 0.85rem;
+      border-radius: 8px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .flow-card.condition {
+      border-color: #38bdf8;
+      background-color: #0c4a6e;
+      color: #f0f9ff;
+      font-weight: 600;
+    }
+
+    .flow-branches {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      width: 100%;
+    }
+
+    .flow-branch {
+      flex: 1;
+      background-color: #0f172a;
+      border: 1px solid #334155;
+      padding: 0.85rem;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.85rem;
+      padding-bottom:1.5rem;
+    }
+
+    .flow-arrow {
+      color: #38bdf8;
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+
+    /* CÓDIGO INTERACTIVO Y EXPLICADO */
+    .code-block {
+      background-color: #090d16;
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      width: 100%;
+      overflow-x: auto;
+      line-height: 1.6;
+    }
+
+    .code-highlight { color: #38bdf8; font-weight: bold; }
+    .code-value { color: #f43f5e; font-weight: bold; }
+    .code-selector { color: #a855f7; font-weight: bold; }
+    .code-prop { color: #22c55e; }
+    .code-comment { color: #64748b; font-style: italic; }
+
+    /* Explicación de sintaxis */
+    .syntax-breakdown {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .syntax-item {
+      background-color: #0f172a;
+      border: 1px solid #334155;
+      padding: 0.75rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+
+    .syntax-item strong {
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    /* Comparativa Mobile First (Paso 4) */
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    .comparison-card {
+      background-color: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .comparison-card h3 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Controls */
+    .controls-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .size-indicator {
+      font-size: 0.85rem;
+      color: #38bdf8;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .btn {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover:not(:disabled) { background-color: #1d4ed8; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; background-color: #475569; }
+    .btn-secondary { background-color: #334155; color: #f8fafc; }
+    .btn-secondary:hover:not(:disabled) { background-color: #475569; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <header>
+      <h1>📱 Diseñando para distintas pantallas</h1>
+      <p class="subtitle">Aprende cómo cambiar los estilos CSS usando condiciones según el tamaño de la pantalla.</p>
+    </header>
+
+    <!-- Indicador de 5 Pasos -->
+    <div class="stepper">
+      <button class="step-btn active" onclick="irAlPaso(1)">1</button>
+      <button class="step-btn" onclick="irAlPaso(2)">2</button>
+      <button class="step-btn" onclick="irAlPaso(3)">3</button>
+      <button class="step-btn" onclick="irAlPaso(4)">4</button>
+      <button class="step-btn" onclick="irAlPaso(5)">5</button>
+    </div>
+
+    <!-- PASO 1: Reorganización real de elementos web -->
+    <div class="step-content active" id="step-1">
+      <div class="step-header">
+        <span>Paso 1 de 5</span>
+        <h2>📐 Reorganizando un Sitio Web Real</h2>
+      </div>
+      <p>Un sitio web responsivo reacomoda sus partes (Header, Contenido y Barra Lateral) para que todo siga siendo cómodo de leer.</p>
+
+      <div class="interactive-demo">
+        <p style="margin-bottom: 0.75rem; font-size: 0.9rem; color: #94a3b8;">Cambia el tamaño y mira cómo se reordenan las cajas:</p>
+        <div class="controls-group">
+          <button class="btn btn-secondary" onclick="setWebLayout('260px')">📱 Celular</button>
+          <button class="btn btn-secondary" onclick="setWebLayout('400px')">📲 Tablet</button>
+          <button class="btn btn-secondary" onclick="setWebLayout('100%')">💻 Monitor</button>
+        </div>
+
+        <div class="screen-simulator" id="sim-screen-1">
+          <div class="web-header" id="p1-header">🌐 Encabezado / Menú</div>
+          <div class="web-body" id="p1-body">
+            <div class="web-main" id="p1-main">📄 Sección Principal</div>
+            <div class="web-sidebar" id="p1-sidebar">📌 Barra Lateral</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PASO 2: El código real CSS -->
+    <div class="step-content" id="step-2">
+      <div class="step-header">
+        <span>Paso 2 de 5</span>
+        <h2>💻 ¿Cómo se escribe el código CSS?</h2>
+      </div>
+      <p class="step-header__subtitle">Así se ve la estructura real de un <strong>Media Query</strong>. Usamos la palabra clave <code style="color:#38bdf8">@media</code> y agrupamos las reglas especiales entre corchetes <code style="color:#a855f7">{ }</code>.</p>
+
+      <div class="code-block">
+<span class="code-comment">/* 1. Estilos normales para monitores grandes */</span><br>
+<span class="code-selector">body</span> {<br>
+&nbsp;&nbsp;<span class="code-prop">background-color</span>: <span class="code-value">#0f172a</span>;<br>
+}<br><br>
+
+<span class="code-comment">/* 2. Regla Media Query con sus corchetes { } */</span><br>
+<span class="code-highlight">@media</span> (<span class="code-prop">max-width</span>: <span class="code-value">600px</span>) {<br>
+&nbsp;&nbsp;<span class="code-comment">/* Todo lo que esté aquí dentro SOLO se aplicará en pantallas chicas */</span><br>
+&nbsp;&nbsp;<span class="code-selector">body</span> {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-prop">background-color</span>: <span class="code-value">#7f1d1d</span>;<br>
+&nbsp;&nbsp;}<br>
+}
+      </div>
+
+      <div class="syntax-breakdown">
+        <div class="syntax-item">
+          <strong style="color: #38bdf8;">@media</strong>
+          Avisa al navegador que aplicará una condición de pantalla.
+        </div>
+        <div class="syntax-item">
+          <strong style="color: #f43f5e;">(max-width: 600px)</strong>
+          La condición: <em>"Aplica si el ancho es de 600px o MENOS"</em>.
+        </div>
+        <div class="syntax-item">
+          <strong style="color: #a855f7;">Corchetes { }</strong>
+          Contienen los cambios de estilo que se activarán.
+        </div>
+      </div>
+    </div>
+
+    <!-- PASO 3: Explicación y Diagrama de Flujo -->
+    <div class="step-content" id="step-3">
+      <div class="step-header">
+        <span>Paso 3 de 5</span>
+        <h2>🔀 La pregunta a la computadora (Condicional)</h2>
+      </div>
+      <p>El código anterior funciona exactamente igual que una **pregunta o condicional** en programación:</p>
+
+      <div class="interactive-demo">
+        <div class="flow-diagram">
+
+          <div class="flow-card condition">
+            ❓ PREGUNTA DEL NAVEGADOR:<br>¿El ancho de la pantalla es menor o igual a 600px?
+          </div>
+          <div class="flow-arrow">↙ &nbsp; &nbsp; &nbsp; ↘</div>
+          <div class="flow-branches">
+            <div class="flow-branch" style="border-color: #ef4444;">
+              <strong style="color: #ef4444;">¡SÍ! </strong><br><br>
+              Ejecuta el código dentro del <br><code style="color: #38bdf8;">@media { ... }</code><br>
+            </div>
+            <div class="flow-branch" style="border-color: #22c55e;">
+              <strong style="color: #22c55e;">NO</strong><br><br>
+              Ignora el @media y mantiene los estilos normales<br>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PASO 4: max-width vs min-width (Mobile First) -->
+    <div class="step-content" id="step-4">
+      <div class="step-header">
+        <span>Paso 4 de 5</span>
+        <h2>📱 Condiciones del @Media Query</h2>
+      </div>
+      <p>Además de <code style="color:#f43f5e">max-width</code>, podemos usar <code style="color:#22c55e">min-width</code>. Esta es la forma profesional preferida porque diseñamos <strong>primero para celulares</strong> y luego ampliamos.</p>
+
+      <div class="comparison-grid">
+        <div class="comparison-card">
+          <h3 style="color: #f43f5e;">🔴 max-width (Desktop-First)</h3>
+          <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.75rem;">Diseñas para monitor y pones reglas para cuando la pantalla se achica.</p>
+          <div class="code-block" style="font-size: 0.75rem;">
+<span class="code-comment">/* Estilo base: Monitores */</span><br>
+.caja { font-size: 20px; }<br><br>
+<span class="code-highlight">@media</span> (<span class="code-prop">max-width</span>: 600px) {<br>
+&nbsp;&nbsp;<span class="code-comment">/* Si es MENOR a 600px */</span><br>
+&nbsp;&nbsp;.caja { font-size: 14px; }<br>
+}
+          </div>
+        </div>
+
+        <div class="comparison-card">
+          <h3 style="color: #22c55e;">🟢 min-width (Mobile-First)</h3>
+          <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.75rem;">Diseñas para celular y agregas mejoras cuando la pantalla crece.</p>
+          <div class="code-block" style="font-size: 0.75rem;">
+<span class="code-comment">/* Estilo base: Celulares */</span><br>
+.caja { font-size: 14px; }<br><br>
+<span class="code-highlight">@media</span> (<span class="code-prop">min-width</span>: 600px) {<br>
+&nbsp;&nbsp;<span class="code-comment">/* Si alcanza o SUPERA los 600px */</span><br>
+&nbsp;&nbsp;.caja { font-size: 20px; }<br>
+}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PASO 5: Demostración Interactiva con Múltiples Cambios -->
+    <div class="step-content" id="step-5">
+      <div class="step-header">
+        <span>Paso 5 de 5</span>
+        <h2>🧪 Usando @Media Query</h2>
+      </div>
+      <p>Al cruzar el límite de <strong>600px</strong>, modificamos <strong>3 cosas al mismo tiempo</strong>: color de fondo, tamaño de texto y visibilidad del sidebar.</p>
+
+      <div class="interactive-demo">
+        <div class="size-indicator" id="current-width-text">Ancho simulado: 650px (Mayor a 600px)</div>
+
+        <div class="controls-group">
+          <button class="btn btn-secondary" onclick="setSimulatedWidth(700)">Más de 600px (Grande)</button>
+          <button class="btn btn-secondary" onclick="setSimulatedWidth(450)">Menos de 600px (Chica)</button>
+        </div>
+
+        <div class="screen-simulator" id="sim-screen-5" style="background-color: #1e293b; padding: 12px;">
+          <div class="web-header" id="p5-header">HEADER (Menú Horizontal)</div>
+          <div class="web-body" id="p5-body">
+            <div class="web-main" id="p5-main" style="background-color: #3b82f6;">
+              <span id="p5-main-text">Texto Grande (18px)</span>
+            </div>
+            <div class="web-sidebar" id="p5-sidebar">SIDEBAR (Visible)</div>
+          </div>
+        </div>
+
+        <div class="code-block" id="p5-code">
+          <!-- Se actualiza dinámicamente con JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Navegación -->
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" id="btn-prev" onclick="cambiarPaso(-1)" disabled>← Anterior</button>
+      <button class="btn" id="btn-next" onclick="cambiarPaso(1)">Siguiente →</button>
+    </div>
+  </div>
+
+  <script>
+    let pasoActual = 1;
+    const totalPasos = 5;
+
+    function irAlPaso(paso) {
+      pasoActual = paso;
+      actualizarInterfaz();
+    }
+
+    function cambiarPaso(delta) {
+      pasoActual += delta;
+      if (pasoActual < 1) pasoActual = 1;
+      if (pasoActual > totalPasos) pasoActual = totalPasos;
+      actualizarInterfaz();
+    }
+
+    function actualizarInterfaz() {
+      document.querySelectorAll('.step-content').forEach((el, index) => {
+        el.classList.toggle('active', index + 1 === pasoActual);
+      });
+
+      document.querySelectorAll('.step-btn').forEach((btn, index) => {
+        const numPaso = index + 1;
+        btn.classList.toggle('active', numPaso === pasoActual);
+        btn.classList.toggle('completed', numPaso < pasoActual);
+      });
+
+      document.getElementById('btn-prev').disabled = pasoActual === 1;
+      const btnNext = document.getElementById('btn-next');
+      if (pasoActual === totalPasos) {
+        btnNext.textContent = '¡Terminar!';
+        btnNext.style.display = 'none';
+      } else {
+        btnNext.textContent = 'Siguiente →';
+      }
+    }
+
+    // Lógica Paso 1: Reorganización de Layout
+    function setWebLayout(size) {
+      const screen = document.getElementById('sim-screen-1');
+      const body = document.getElementById('p1-body');
+      const sidebar = document.getElementById('p1-sidebar');
+
+      screen.style.width = size;
+
+      if (size === '260px') {
+        body.style.flexDirection = 'column';
+        sidebar.style.flex = 'none';
+        sidebar.style.height = '40px';
+      } else {
+        body.style.flexDirection = 'row';
+        sidebar.style.flex = '1';
+        sidebar.style.height = 'auto';
+      }
+    }
+
+    // Lógica Paso 5: Cambios múltiples y actualización de código real
+    function setSimulatedWidth(widthPx) {
+      const screen = document.getElementById('sim-screen-5');
+      const sidebar = document.getElementById('p5-sidebar');
+      const main = document.getElementById('p5-main');
+      const mainText = document.getElementById('p5-main-text');
+      const widthText = document.getElementById('current-width-text');
+      const codeBlock = document.getElementById('p5-code');
+
+      screen.style.width = widthPx + 'px';
+
+      if (widthPx < 600) {
+        // MENOR a 600px
+        widthText.textContent = `Ancho simulado: ${widthPx}px (Menor a 600px)`;
+        screen.style.backgroundColor = '#450a0a';
+        sidebar.style.display = 'none';
+        main.style.backgroundColor = '#ef4444';
+        mainText.style.fontSize = '12px';
+        mainText.textContent = 'Texto Chico (12px)';
+
+        codeBlock.innerHTML = `
+<span class="code-comment">/* ⚠️ REGLA @MEDIA ACTIVADA EN ESTE MOMENTO */</span><br>
+<span class="code-highlight">@media</span> (<span class="code-prop">max-width</span>: <span class="code-value">600px</span>) {<br>
+&nbsp;&nbsp;<span class="code-selector">.contenedor</span> { <span class="code-prop">background-color</span>: <span class="code-value">#450a0a</span>; }<br>
+&nbsp;&nbsp;<span class="code-selector">.main</span> { <span class="code-prop">background-color</span>: <span class="code-value">#ef4444</span>; <span class="code-prop">font-size</span>: <span class="code-value">12px</span>; }<br>
+&nbsp;&nbsp;<span class="code-selector">.sidebar</span> { <span class="code-prop">display</span>: <span class="code-value">none</span>; <span class="code-comment">/* Oculto */</span> }<br>
+}`;
+      } else {
+        // MAYOR a 600px
+        widthText.textContent = `Ancho simulado: ${widthPx}px (Mayor a 600px)`;
+        screen.style.backgroundColor = '#1e293b';
+        sidebar.style.display = 'flex';
+        main.style.backgroundColor = '#3b82f6';
+        mainText.style.fontSize = '18px';
+        mainText.textContent = 'Texto Grande (18px)';
+
+        codeBlock.innerHTML = `
+<span class="code-comment">/* ℹ️ ESTILOS BASE (PANTALLAS GRANDES) */</span><br>
+<span class="code-selector">.contenedor</span> { <span class="code-prop">background-color</span>: <span class="code-value">#1e293b</span>; }<br>
+<span class="code-selector">.main</span> { <span class="code-prop">background-color</span>: <span class="code-value">#3b82f6</span>; <span class="code-prop">font-size</span>: <span class="code-value">18px</span>; }<br>
+<span class="code-selector">.sidebar</span> { <span class="code-prop">display</span>: <span class="code-value">flex</span>; <span class="code-comment">/* Visible */</span> }`;
+      }
+    }
+
+    // Inicializar Paso 5 al cargar
+    setSimulatedWidth(700);
+  </script>
+</body>
+</html>
